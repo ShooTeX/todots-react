@@ -1,4 +1,4 @@
-# React Typescript Todo list
+# [React Typescript Todo list](https://todo.stx.wtf)
 
 todo list written in React Typescript
 
