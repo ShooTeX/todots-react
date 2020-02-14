@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Grid, Card, CardHeader, CardContent, Container, Divider, TextField } from '@material-ui/core'
+import { Grid, Card, CardHeader, CardContent, Container, Divider, TextField, CssBaseline } from '@material-ui/core'
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
 import List, { item } from './Components/List'
 import uuid4 from 'uuid4'
@@ -44,23 +44,24 @@ const App = (): JSX.Element => {
   }
   return (
     <ThemeProvider theme={darkTheme}>
-      {console.log('rendered')}
-      <Container>
-        <Grid container justify='center' alignItems='center' style={{ minHeight: '100vh' }}>
-          <Grid item>
-            <Card elevation={3} variant='elevation'>
-              <CardHeader title='TODO' subheader='in typescript' />
-              <Divider />
-              <CardContent>
-                <List items={items} handleClick={(uid: number) => handleClick(uid)} />
-                <form noValidate autoComplete='false' onSubmit={(e) => handleSubmit(e)}>
-                  <TextField variant='outlined' onChange={(e) => handleChange(e)} value={input} error={error} helperText={error ? "Input can't be empty" : ''} />
-                </form>
-              </CardContent>
-            </Card>
+      <CssBaseline>
+        <Container>
+          <Grid container justify='center' alignItems='center' style={{ minHeight: '100vh' }}>
+            <Grid item xs={3}>
+              <Card elevation={3} variant='elevation'>
+                <CardHeader title='TODO' subheader='in typescript' />
+                <Divider />
+                <CardContent>
+                  <List items={items} handleClick={(uid: number) => handleClick(uid)} />
+                  <form noValidate autoComplete='false' onSubmit={(e) => handleSubmit(e)}>
+                    <TextField variant='outlined' onChange={(e) => handleChange(e)} value={input} error={error} helperText={error ? "Input can't be empty" : ''} fullWidth />
+                  </form>
+                </CardContent>
+              </Card>
+            </Grid>
           </Grid>
-        </Grid>
-      </Container>
+        </Container>
+      </CssBaseline>
     </ThemeProvider>
   )
 }
