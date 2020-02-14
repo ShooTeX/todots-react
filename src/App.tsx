@@ -28,6 +28,10 @@ const App = (): JSX.Element => {
     setItems(newItems)
   }
 
+  const handleDelete = (uid: number): void => {
+    setItems(items.filter(item => item.uid !== uid))
+  }
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
     if (input !== '') {
@@ -47,12 +51,12 @@ const App = (): JSX.Element => {
       <CssBaseline>
         <Container>
           <Grid container justify='center' alignItems='center' style={{ minHeight: '100vh' }}>
-            <Grid item xs={3}>
+            <Grid item lg={4}>
               <Card elevation={3} variant='elevation'>
                 <CardHeader title='TODO' subheader='in typescript' />
                 <Divider />
                 <CardContent>
-                  <List items={items} handleClick={(uid: number) => handleClick(uid)} />
+                  <List items={items} handleDelete={(uid: number) => handleDelete(uid)} handleClick={(uid: number) => handleClick(uid)} />
                   <form noValidate autoComplete='false' onSubmit={(e) => handleSubmit(e)}>
                     <TextField variant='outlined' onChange={(e) => handleChange(e)} value={input} error={error} helperText={error ? "Input can't be empty" : ''} fullWidth />
                   </form>
