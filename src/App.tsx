@@ -2,8 +2,10 @@ import React, { useState } from 'react'
 import { Grid, Card, CardHeader, CardContent, Container, Divider, TextField, CssBaseline } from '@material-ui/core'
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
 import List, { item } from './Components/List'
-import uuid4 from 'uuid4'
 import { blue, cyan } from '@material-ui/core/colors'
+import { useQuery } from '@apollo/react-hooks'
+import { gql } from 'apollo-boost'
+import uuid4 from 'uuid4'
 
 const darkTheme = createMuiTheme({
   palette: {
@@ -13,6 +15,16 @@ const darkTheme = createMuiTheme({
   }
 })
 
+const ITEMS = gql`
+  {
+    items {
+      id
+      title
+      checked
+    }
+  }
+`
+
 const App = (): JSX.Element => {
   const [error, setError] = useState(false)
   const [input, setInput] = useState<String>('')
@@ -20,6 +32,10 @@ const App = (): JSX.Element => {
     { uid: uuid4(), title: 'item 1', checked: false },
     { uid: uuid4(), title: 'item 2', checked: false }
   ])
+  const { loading, error: error2, data } = useQuery(ITEMS)
+
+  if (loading) return <div>loading...'</div>
+  if (error2 !== null) console.error(error2)
 
   const handleClick = (uid: Number): void => {
     const index = items.findIndex(obj => obj.uid === uid)
@@ -56,7 +72,7 @@ const App = (): JSX.Element => {
                 <CardHeader title='TODO' subheader='in typescript' />
                 <Divider />
                 <CardContent>
-                  <List items={items} handleDelete={(uid: number) => handleDelete(uid)} handleClick={(uid: number) => handleClick(uid)} />
+                  <List items={data.items} handleDelete={(uid: number) => handleDelete(uid)} handleClick={(uid: number) => handleClick(uid)} />
                   <form noValidate autoComplete='false' onSubmit={(e) => handleSubmit(e)}>
                     <TextField variant='outlined' onChange={(e) => handleChange(e)} value={input} error={error} helperText={error ? "Input can't be empty" : ''} fullWidth />
                   </form>
