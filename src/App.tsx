@@ -25,6 +25,16 @@ const ITEMS = gql`
   }
 `
 
+const ADD_ITEM = gql`
+  mutation AddItem($title: String!, $checked: Boolean!){
+    addItem(title: $title, checked: $checked) {
+      id
+      title
+      chcked
+    }
+  }
+`
+
 const App = (): JSX.Element => {
   const [error, setError] = useState(false)
   const [input, setInput] = useState<String>('')
