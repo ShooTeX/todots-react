@@ -42,10 +42,10 @@ const App = (): JSX.Element => {
     { uid: uuid4(), title: 'item 1', checked: false },
     { uid: uuid4(), title: 'item 2', checked: false }
   ])
-  const { loading, error: error2, data } = useQuery(ITEMS)
+  const { loading, error: gqlError, data } = useQuery(ITEMS)
 
   if (loading) return <div>loading...'</div>
-  if (error2 !== null) console.error(error2)
+  if (gqlError !== null) console.error(gqlError)
 
   const handleClick = (uid: Number): void => {
     const index = items.findIndex(obj => obj.uid === uid)
