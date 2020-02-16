@@ -3,7 +3,7 @@ import { Grid, Card, CardHeader, CardContent, Container, Divider, TextField, Css
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
 import List, { item } from './Components/List'
 import { blue, cyan } from '@material-ui/core/colors'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import { gql } from 'apollo-boost'
 import uuid4 from 'uuid4'
 
@@ -38,30 +38,36 @@ const ADD_ITEM = gql`
 const App = (): JSX.Element => {
   const [error, setError] = useState(false)
   const [input, setInput] = useState<String>('')
-  const [items, setItems] = useState<item[]>([
-    { uid: uuid4(), title: 'item 1', checked: false },
-    { uid: uuid4(), title: 'item 2', checked: false }
-  ])
+  
   const { loading, error: gqlError, data } = useQuery(ITEMS)
+  const [addItem] = useMutation(ADD_ITEM, {
+    update(cache, { data: { addItem }}) {
+      const { items } = cache.readQuery({query: ITEMS})
+      cache.writeQuery({
+        query: ITEMS,
+        data: {items: items.concat([addItem])}
+      })
+    }
+  })
 
   if (loading) return <div>loading...'</div>
   if (gqlError !== null) console.error(gqlError)
 
   const handleClick = (uid: Number): void => {
-    const index = items.findIndex(obj => obj.uid === uid)
-    const newItems = [...items]
-    newItems[index].checked = !newItems[index].checked
-    setItems(newItems)
+  // const index = items.findIndex(obj => obj.uid === uid)
+    // const newItems = [...items]
+    // newItems[index].checked = !newItems[index].checked
+    // setItems(newItems)
   }
 
   const handleDelete = (uid: number): void => {
-    setItems(items.filter(item => item.uid !== uid))
+  // setItems(items.filter(item => item.uid !== uid))
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
     if (input !== '') {
-      setItems([...items, { uid: uuid4(), title: input, checked: false }])
+    // setItems([...items, { uid: uuid4(), title: input, checked: false }])
       setInput('')
     } else {
       setError(true)
