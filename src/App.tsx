@@ -5,7 +5,6 @@ import List, { item } from './Components/List'
 import { blue, cyan } from '@material-ui/core/colors'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { gql } from 'apollo-boost'
-import uuid4 from 'uuid4'
 
 const darkTheme = createMuiTheme({
   palette: {
@@ -30,28 +29,50 @@ const ADD_ITEM = gql`
     addItem(title: $title, checked: $checked) {
       id
       title
-      chcked
+      checked
     }
+  }
+`
+
+const DELETE_ITEM = gql`
+  mutation DeleteItem($id: String!){
+    deleteItem(id: $id)
   }
 `
 
 const App = (): JSX.Element => {
   const [error, setError] = useState(false)
   const [input, setInput] = useState<String>('')
-  
+
   const { loading, error: gqlError, data } = useQuery(ITEMS)
-  const [addItem] = useMutation(ADD_ITEM, {
-    update(cache, { data: { addItem }}) {
-      const { items } = cache.readQuery({query: ITEMS})
-      cache.writeQuery({
-        query: ITEMS,
-        data: {items: items.concat([addItem])}
-      })
+  const [addItem] = useMutation<{addItem: item}>(
+    ADD_ITEM,
+    {
+      update (cache, { data: { addItem } }: any) {
+        const { items }: any = cache.readQuery({ query: ITEMS })
+        cache.writeQuery({
+          query: ITEMS,
+          data: { items: items.concat([addItem]) }
+        })
+      }
     }
-  })
+  )
+
+  const [deleteItem] = useMutation<{deleteItem: String}>(
+    DELETE_ITEM,
+    {
+      update (cache, { data: { deleteItem } }: any) {
+        const { items }: any = cache.readQuery({ query: ITEMS })
+        cache.writeQuery({
+          query: ITEMS,
+          data: { items: items.filter((obj: any) => obj.id !== deleteItem) }
+        })
+      }
+    }
+  )
 
   if (loading) return <div>loading...'</div>
-  if (gqlError !== null) console.error(gqlError)
+  if (gqlError !== undefined) console.error(gqlError)
 
   const handleClick = (uid: Number): void => {
   // const index = items.findIndex(obj => obj.uid === uid)
@@ -60,14 +81,15 @@ const App = (): JSX.Element => {
     // setItems(newItems)
   }
 
-  const handleDelete = (uid: number): void => {
+  const handleDelete = (id: String): void => {
   // setItems(items.filter(item => item.uid !== uid))
+    deleteItem({ variables: { id } }).catch(e => console.log(e))
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
     if (input !== '') {
-    // setItems([...items, { uid: uuid4(), title: input, checked: false }])
+      addItem({ variables: { title: input, checked: false } }).catch(e => console.log(e))
       setInput('')
     } else {
       setError(true)
@@ -88,7 +110,7 @@ const App = (): JSX.Element => {
                 <CardHeader title='TODO' subheader='in typescript' />
                 <Divider />
                 <CardContent>
-                  <List items={data.items} handleDelete={(uid: number) => handleDelete(uid)} handleClick={(uid: number) => handleClick(uid)} />
+                  <List items={data.items} handleDelete={(id: String) => handleDelete(id)} handleClick={() => handleClick(data.id)} />
                   <form noValidate autoComplete='false' onSubmit={(e) => handleSubmit(e)}>
                     <TextField variant='outlined' onChange={(e) => handleChange(e)} value={input} error={error} helperText={error ? "Input can't be empty" : ''} fullWidth />
                   </form>
