@@ -115,14 +115,16 @@ const App = (): JSX.Element => {
               <Card elevation={3} variant='elevation'>
                 <CardHeader title='TODO' subheader='in typescript' />
                 <Divider />
-                {loading ? <LinearProgress /> : (
-                  <CardContent>
-                    <List items={data.items} handleDelete={(id: String) => handleDelete(id)} handleClick={(id: String, checked: Boolean) => handleClick(id, checked)} />
-                    <form noValidate autoComplete='false' onSubmit={(e) => handleSubmit(e)}>
-                      <TextField variant='outlined' onChange={(e) => handleChange(e)} value={input} error={error} helperText={error ? "Input can't be empty" : ''} fullWidth />
-                    </form>
-                  </CardContent>
-                )}
+                <CardContent>
+                  {loading ? <LinearProgress /> : (
+                    <>
+                      <List items={data.items} handleDelete={(id: String) => handleDelete(id)} handleClick={(id: String, checked: Boolean) => handleClick(id, checked)} />
+                      <form noValidate autoComplete='false' onSubmit={(e) => handleSubmit(e)}>
+                        <TextField variant='outlined' onChange={(e) => handleChange(e)} value={input} error={error} helperText={error ? "Input can't be empty" : ''} fullWidth />
+                      </form>
+                    </>
+                  )}
+                </CardContent>
               </Card>
             </Grid>
           </Grid>
