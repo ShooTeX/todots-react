@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Grid, Card, CardHeader, CardContent, Container, Divider, TextField, CssBaseline } from '@material-ui/core'
+import { Grid, Card, CardHeader, CardContent, Container, Divider, TextField, CssBaseline, LinearProgress } from '@material-ui/core'
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
 import List, { item } from './Components/List'
 import { blue, cyan } from '@material-ui/core/colors'
@@ -82,19 +82,13 @@ const App = (): JSX.Element => {
 
   const [checkItem] = useMutation(CHECK_ITEM)
 
-  if (loading) return <div>loading...'</div>
   if (gqlError !== undefined) console.error(gqlError)
 
   const handleClick = (id: String, checked: Boolean): void => {
-  // const index = items.findIndex(obj => obj.uid === uid)
-    // const newItems = [...items]
-    // newItems[index].checked = !newItems[index].checked
-    // setItems(newItems)
     checkItem({ variables: { id, checked } }).catch(e => console.log(e))
   }
 
   const handleDelete = (id: String): void => {
-  // setItems(items.filter(item => item.uid !== uid))
     deleteItem({ variables: { id } }).catch(e => console.log(e))
   }
 
@@ -121,12 +115,14 @@ const App = (): JSX.Element => {
               <Card elevation={3} variant='elevation'>
                 <CardHeader title='TODO' subheader='in typescript' />
                 <Divider />
-                <CardContent>
-                  <List items={data.items} handleDelete={(id: String) => handleDelete(id)} handleClick={(id: String, checked: Boolean) => handleClick(id, checked)} />
-                  <form noValidate autoComplete='false' onSubmit={(e) => handleSubmit(e)}>
-                    <TextField variant='outlined' onChange={(e) => handleChange(e)} value={input} error={error} helperText={error ? "Input can't be empty" : ''} fullWidth />
-                  </form>
-                </CardContent>
+                {loading ? <LinearProgress /> : (
+                  <CardContent>
+                    <List items={data.items} handleDelete={(id: String) => handleDelete(id)} handleClick={(id: String, checked: Boolean) => handleClick(id, checked)} />
+                    <form noValidate autoComplete='false' onSubmit={(e) => handleSubmit(e)}>
+                      <TextField variant='outlined' onChange={(e) => handleChange(e)} value={input} error={error} helperText={error ? "Input can't be empty" : ''} fullWidth />
+                    </form>
+                  </CardContent>
+                )}
               </Card>
             </Grid>
           </Grid>
