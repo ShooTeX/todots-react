@@ -40,6 +40,15 @@ const DELETE_ITEM = gql`
   }
 `
 
+const CHECK_ITEM = gql`
+  mutation CheckItem($id: String!, $checked: Boolean!) {
+    checkItem(id: $id, checked: $checked) {
+      id
+      checked
+    }
+  }
+`
+
 const App = (): JSX.Element => {
   const [error, setError] = useState(false)
   const [input, setInput] = useState<String>('')
@@ -71,14 +80,17 @@ const App = (): JSX.Element => {
     }
   )
 
+  const [checkItem] = useMutation(CHECK_ITEM)
+
   if (loading) return <div>loading...'</div>
   if (gqlError !== undefined) console.error(gqlError)
 
-  const handleClick = (uid: Number): void => {
+  const handleClick = (id: String, checked: Boolean): void => {
   // const index = items.findIndex(obj => obj.uid === uid)
     // const newItems = [...items]
     // newItems[index].checked = !newItems[index].checked
     // setItems(newItems)
+    checkItem({ variables: { id, checked } }).catch(e => console.log(e))
   }
 
   const handleDelete = (id: String): void => {
@@ -110,7 +122,7 @@ const App = (): JSX.Element => {
                 <CardHeader title='TODO' subheader='in typescript' />
                 <Divider />
                 <CardContent>
-                  <List items={data.items} handleDelete={(id: String) => handleDelete(id)} handleClick={() => handleClick(data.id)} />
+                  <List items={data.items} handleDelete={(id: String) => handleDelete(id)} handleClick={(id: String, checked: Boolean) => handleClick(id, checked)} />
                   <form noValidate autoComplete='false' onSubmit={(e) => handleSubmit(e)}>
                     <TextField variant='outlined' onChange={(e) => handleChange(e)} value={input} error={error} helperText={error ? "Input can't be empty" : ''} fullWidth />
                   </form>

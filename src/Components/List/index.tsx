@@ -17,7 +17,7 @@ interface Props {
 const ListComponent = ({ handleDelete, handleClick, items }: Props): JSX.Element => (
   <List>
     {items.map((item: item) => (
-      <ListItem key={item.id} role={undefined} dense button onClick={() => handleClick(item.id)}>
+      <ListItem key={item.id} role={undefined} dense button onClick={() => handleClick(item.id, !item.checked)}>
         <ListItemIcon>
           <Checkbox
             checked={item.checked}
