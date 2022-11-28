@@ -7,7 +7,7 @@ import ApolloClient from 'apollo-boost'
 import { ApolloProvider } from '@apollo/react-hooks'
 
 const client = new ApolloClient({
-  uri: 'https://stx-todogql.herokuapp.com/'
+  uri: 'https://graphql-production-fe26.up.railway.app/'
 })
 
 ReactDOM.render(<ApolloProvider client={client}><App /></ApolloProvider>, document.getElementById('root'))
